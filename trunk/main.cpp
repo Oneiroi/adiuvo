@@ -49,6 +49,13 @@ void flock(char *path){
 }
 
 /**
+ * Provide memory maping functionality, can be handy for testing
+ * allow things such as anano mampping with /dev/zero, and noting diffs between mapped allocation and actual use
+ */
+void mMap(){
+	cout << "coming soon" << endl;
+}
+/**
  * This function is the main program function
  * @var int argc count of runtime arguments
  * @var char *argv[] runtime arguments
