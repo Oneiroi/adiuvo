@@ -28,5 +28,6 @@ def _cliProgress(str):
         while len(str) < opts.slen:
             str = '%s ' % str
         opts.slen = len(str)
-        sys.stdout.write(str + '\r')
-        sys.stdout.flush()
+        sys.stderr.write(str + '\r')
+        sys.stderr.flush()
+        

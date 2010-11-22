@@ -8,6 +8,8 @@ __license__="GNU v3 + part 5d section 7: Redistribution/Reuse of this code is pe
 '''
 
  #this was not fun to type!
+'''
+Not needed at this time
 http_code = {
                      100:{'desc':'continue'},
                      101:{'desc':'switching protocol'},
@@ -52,6 +54,7 @@ http_code = {
                      505:{'desc':'HTTP Version Not Supported'}
                  }
 '''
+'''
 This function will assume the DB details you pass have a mySQL table named
 
 apache_data
@@ -69,12 +72,48 @@ CREATE TABLE apache_data (
 )
 
 '''
-def parse_to_mysql(logPath,mysql_host,mysql_user,mysql_pass,mysql_db):
-	#tc=78107902
-	#i=0
 
+def parse_by_hour(logPath):
+    '''Abort if logpath does not exits'''
+    if not os.path.isfile(logPath):
+        print 'Could not find',logPath
+        sys.exit(1)
+    r = re.compile('([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)[^[]+\[([0-9]+\/[a-z]+\/[0-9]+:[0-9]+:[0-9]+:[0-9]+)\s[0-9\+|-]+\]\s"([a-z]+)\s([^\s]+)\s[^"]+"\s([0-9]{3})\s([0-9]+)\s"([^"]+)"\s"([^"]+)"',re.IGNORECASE)
+    '''
+		1 - ip
+		2 - time
+		3 - method
+		4 - uri
+		5 - http_code
+		6 - bytes
+		7 - referer
+		8 - user agent
+    '''
+    res = {}
+    for line in open(logPath,'r'):
+        for m in r.finditer(line):
+                ip 		= m.group(1)
+                rtime 		= time.strftime('%Y-%m-%d %H:%M:%S',time.strptime(m.group(2),'%d/%b/%Y:%H:%M:%S')) #convert to mySQL time
+                method 		= m.group(3)
+                uri 		= m.group(4)	#Whilst rare, this could contain injection code, let's escape it
+                http_code 	= int(m.group(5))
+                bytes 		= int(m.group(6))
+                referer		= m.group(7)	#Whilst rare, this could contain injection code, let's escape it
+                user_agent	= m.group(8) #Whilst rare, this could contain injection code, let's escape it
+                try:
+                    res[re.split(':',rtime)[0]]['bytes']+=bytes
+                    res[re.split(':',rtime)[0]]['rcount']+=1
+                except:
+                    res.update({re.split(':',rtime)[0]:{'bytes':bytes,'rcount':1}})
+
+    print 'hour,bytes,requests'
+    for hour in res:
+        print '%s,%s,%s' % (hour,res[hour]['bytes'],res[hour]['rcount'])
+                    
+                
+def parse_to_mysql(logPath,mysql_host,mysql_user,mysql_pass,mysql_db):
 	'''Abort if logpath does not exits'''
-	if not os.path.isfile(logPath):
+        if not os.path.isfile(logPath):
 		print 'Could not find',logPath
 		sys.exit(1)
 	'''@todo: A multiline expr, and processing in say 1000 line chunks may be more efficent, esp as this means you could mmap said chunk
@@ -110,8 +149,7 @@ def parse_to_mysql(logPath,mysql_host,mysql_user,mysql_pass,mysql_db):
 			''' @todo: add checking here to ensure data has been entered correctly '''
 			c.execute('''   INSERT INTO apache_data (ip,request_time,method,uri,http_code,bytes,referer,user_agent)
                                         VALUES ("%s","%s","%s","%s",%d,%d,"%s","%s") ''' % (ip,rtime,method,uri,http_code,bytes,referer,user_agent))
-			
 
-	
-if __name__ == "__main__":
-	parse_to_mysql('./test.log','localhost','python','test123','python_test')
+
+if __name__ == '__main__':
+	parse_by_hour('./test.log')
