@@ -59,17 +59,23 @@ This function will assume the DB details you pass have a mySQL table named
 
 apache_data
 
-CREATE TABLE apache_data (
-	id INT AUTO_INCREMENT PRIMARY_KEY,
-	ip VARCHAR(255),
-	request_time INT(11),
-	method VARCHAR(6),
-	uri VARCHAR(255),
-	http_code TINYINT(3),
-	bytes INT,
-	referer VARCHAR(255),
-	user_agent VARCHAR(255)
-)
+'CREATE TABLE `apache_data` (
+  `id` int(11) NOT NULL auto_increment,
+  `ip` varchar(15) default NULL,
+  `request_time` datetime default NULL,
+  `method` varchar(6) default NULL,
+  `uri` varchar(255) default NULL,
+  `http_code` int(3) default NULL,
+  `bytes` int(11) default NULL,
+  `referer` varchar(255) default NULL,
+  `user_agent` text,
+  PRIMARY KEY  (`id`),
+  KEY `ip` (`ip`),
+  KEY `request_time` (`request_time`),
+  KEY `http_code` (`http_code`),
+  KEY `method` (`method`),
+  KEY `uri` (`uri`)
+) ENGINE=MyISAM AUTO_INCREMENT=283221196 DEFAULT CHARSET=utf8'
 
 '''
 
