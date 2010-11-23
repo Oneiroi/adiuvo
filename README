@@ -1,0 +1,16 @@
+Adiuvo
+======
+
+This project is a complete rework of the [sysadmin](https://github.com/Oneiroi/sysadmin) toolset, which has become bloated and more and more complicated.
+
+Usage
+-----
+
+This is not your typical set of python modules, where as some can be imported directly to python this is only because they have not been converted for compilation using [Cython](http://docs.cython.org/)
+
+The setup.py is included as per the GNU licence to include the tools needed for compilcation you will however need Cython installed to compile on your system
+
+License
+-------
+
+Due to the amount of time spent in working hours on this project, as it was needed to parse a huge data set, I have dual licensed this project under GNU v3, noting the copyright holders to be Psycle INteractive Ltd and David Busby
