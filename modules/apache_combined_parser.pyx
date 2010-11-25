@@ -1,10 +1,10 @@
 import re,sys,os,mmap,time,MySQLdb
 
-cdef char* ip,rtime,method,uri,referer,user_agent,line
+cdef char* ip,rtime,method,uri,referer,user_agent,line,logPath
 cdef int http_code,bytes
 
 
-cdef void parse_by_hour( char* logPath ):
+def parse_by_hour( logPath ):
     if not os.path.isfile( logPath ):
         print 'Could not find',logPath
         sys.exit(1)
