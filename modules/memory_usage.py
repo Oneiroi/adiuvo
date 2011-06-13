@@ -1,6 +1,4 @@
-import glob
-import re
-import os
+import glob,os,re
 
 '''
 __author__="Matthew Ife,David Busby"
@@ -13,24 +11,8 @@ One known issue where this helps is with apache & php APC, where the RSS size pe
 and subsequently tuning apache threads to fit in memory and provide the bext performance
 '''
 
-ispid = re.compile("/proc/([0-9]+)")
-pssinfo = re.compile("Private.+:\s+([0-9]+)")
-files = glob.glob('/proc/*')
+rPmem	= re.compile('Private.+:\s+([0-9]+)')
+files	= glob.glob('/proc/([0-9]+)')
 
-for apid in files:
-        m = ispid.match(apid)
-        if not m:
-                continue
-        pid = m.group(1)
-
-        try:
-                data = open(os.path.join(apid,'smaps')).read(512000)
-                stat = open(os.path.join(apid,'stat')).read(512000).split(" ")[1]
-        except IOError:
-                continue
-        m = pssinfo.findall(data)
-        m = map(int,m)
-        a = 0
-        for b in m:
-                a += b
-        print "%d %s %s" % (a, pid, stat)
+for pid in files:
+	print pid
